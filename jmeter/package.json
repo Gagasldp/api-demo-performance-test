@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "generate-users": "node scripts/generate-users.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "mysql2": "^3.14.0"
+  }
+}
