@@ -3,16 +3,47 @@ services:
     image: mysql:8.0
     container_name: performance-test-mysql
     restart: unless-stopped
+
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: performance_test
-      MYSQL_USER: app_user
-      MYSQL_PASSWORD: app_password
+      MYSQL_USER: performance_user
+      MYSQL_PASSWORD: performance_password
+
     ports:
       - "3306:3306"
+
     volumes:
-    - mysql_data:/var/lib/mysql
-    - ./database/init:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: performance-test-backend
+    restart: unless-stopped
+
+    ports:
+      - "5001:5001"
+
+    environment:
+      NODE_ENV: production
+      PORT: 5001
+
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: app_user
+      DB_PASSWORD: performance_password
+      DB_NAME: performance_test
+
+      JWT_SECRET: your-super-secret-key
+
+    depends_on:
+      - mysql
 
 volumes:
   mysql_data:
+    external: true
+    name: api-demo-performance-test_mysql_data
