@@ -13,6 +13,7 @@ pipeline {
                 sh '''
                     rm -rf results
                     mkdir -p results/html-report
+                    chmod -R 777 results
                 '''
             }
         }
