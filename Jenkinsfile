@@ -19,20 +19,22 @@ pipeline {
         }
 
         stage('Run JMeter Test') {
-            steps {
-                sh '''
-                    docker run --rm \
-                      --user root \
-                      --network performance-test-network \
-                      -v "$WORKSPACE/jmeter:/test/jmeter:ro" \
-                      -v "$WORKSPACE/results:/test/results" \
-                      justb4/jmeter:latest \
-                      -n \
-                      -t /test/jmeter/ecommerce-api-performance-test.jmx \
-                      -l /test/results/results.jtl
-                '''
-            }
-        }
+    steps {
+        sh '''
+            rm -rf results
+            mkdir -p results
+
+            docker run --rm \
+              --user root \
+              --network performance-test-network \
+              --volumes-from jenkins \
+              justb4/jmeter:latest \
+              -n \
+              -t /var/jenkins_home/workspace/performance-test/jmeter/ecommerce-api-performance-test.jmx \
+              -l /var/jenkins_home/workspace/performance-test/results/results.jtl
+        '''
+    }
+}
     }
 
     post {
